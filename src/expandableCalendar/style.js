@@ -60,10 +60,11 @@ export default function styleConstructor(theme = {}) {
       position: 'absolute',
       left: 0,
       right: 0,
-      backgroundColor: appStyle.calendarBackground
+      backgroundColor: appStyle.calendarBackground,
+      flexDirection: 'row'
     },
     headerTitle: {
-      alignSelf: 'center',
+      alignSelf: 'flex-start',
       paddingTop: 13,
       paddingBottom: 18,
       fontSize: appStyle.textMonthFontSize,

@@ -27,11 +27,11 @@ export default function styleConstructor(theme = {}) {
     },
     selected: {
       backgroundColor: appStyle.selectedDayBackgroundColor,
-      borderRadius: 16
+      borderRadius: 4
     },
     today: {
       backgroundColor: appStyle.todayBackgroundColor,
-      borderRadius: 16
+      borderRadius: 4
     },
     todayText: {
       color: appStyle.todayTextColor
@@ -66,6 +66,7 @@ export default function styleConstructor(theme = {}) {
     todayDot: {
       backgroundColor: appStyle.todayDotColor || appStyle.dotColor
     },
+    // @ts-expect-error
     ...(theme['stylesheet.day.basic'] || {})
   });
 }
