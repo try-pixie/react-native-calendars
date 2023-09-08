@@ -17,6 +17,7 @@ import {UpdateSources, todayString} from './commons';
 import constants from '../commons/constants';
 import styleConstructor from './style';
 import Context from './Context';
+import InfiniteAgendaList from './infiniteAgendaList';
 const viewabilityConfig = {
   itemVisiblePercentThreshold: 20 // 50 means if 50% of the item is visible
 };
@@ -27,6 +28,9 @@ const viewabilityConfig = {
  * @example: https://github.com/wix/react-native-calendars/blob/master/example/src/screens/expandableCalendar.js
  */
 const AgendaList = props => {
+  if (props.infiniteListProps) {
+    return <InfiniteAgendaList {...props} />;
+  }
   const {
     theme,
     sections,
@@ -240,7 +244,7 @@ const AgendaList = props => {
 function areTextPropsEqual(prev, next) {
   return isEqual(prev.style, next.style) && prev.title === next.title;
 }
-const AgendaSectionHeader = React.memo(props => {
+export const AgendaSectionHeader = React.memo(props => {
   return (
     <Text allowFontScaling={false} style={props.style} onLayout={props.onLayout}>
       {props.title}
