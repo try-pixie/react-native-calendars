@@ -48,7 +48,8 @@ const AgendaList = props => {
     dayFormat = 'dddd, MMM d',
     useMoment,
     markToday = true,
-    onViewableItemsChanged
+    onViewableItemsChanged,
+    setRef
   } = props;
   const {date, updateSource, setDate, setDisabled} = useContext(Context);
   const style = useRef(styleConstructor(theme));
@@ -64,6 +65,11 @@ const AgendaList = props => {
       }, 500);
     }
   }, []);
+
+  useEffect(() => {
+    if (list?.current) setRef(list);
+  }, [list]);
+
   useDidUpdate(() => {
     // NOTE: on first init data should set first section to the current date!!!
     if (updateSource !== UpdateSources.LIST_DRAG && updateSource !== UpdateSources.CALENDAR_INIT) {
@@ -98,6 +104,7 @@ const AgendaList = props => {
   const getSectionTitle = useCallback(title => {
     if (!title) return;
     let sectionTitle = title;
+    let day;
     if (dayFormatter) {
       sectionTitle = dayFormatter(title);
     } else if (dayFormat) {
@@ -105,15 +112,16 @@ const AgendaList = props => {
         const moment = getMoment();
         sectionTitle = moment(title).format(dayFormat);
       } else {
-        sectionTitle = new XDate(title).toString(dayFormat);
+        day = new XDate(title).toString('dddd');
+        sectionTitle = new XDate(title).toString('MMM d');
       }
     }
     if (markToday) {
       const string = getDefaultLocale().today || todayString;
       const today = isToday(title);
-      sectionTitle = today ? `${string}, ${sectionTitle}` : sectionTitle;
+      day = today ? `${string}` : day;
     }
-    return sectionTitle;
+    return {day, date: sectionTitle, title};
   }, []);
   const scrollToSection = useCallback(
     debounce(
@@ -198,10 +206,10 @@ const AgendaList = props => {
   const _renderSectionHeader = useCallback(
     info => {
       const title = info?.section?.title;
-      if (renderSectionHeader) {
-        return renderSectionHeader(title);
-      }
       const headerTitle = getSectionTitle(title);
+      if (renderSectionHeader) {
+        return renderSectionHeader(headerTitle);
+      }
       return <AgendaSectionHeader title={headerTitle} style={headerTextStyle} onLayout={onHeaderLayout} />;
     },
     [headerTextStyle]
@@ -226,6 +234,7 @@ const AgendaList = props => {
       onMomentumScrollBegin={_onMomentumScrollBegin}
       onMomentumScrollEnd={_onMomentumScrollEnd}
       onScrollToIndexFailed={_onScrollToIndexFailed}
+      onLayout={props.onLayout}
     />
   );
   // _getItemLayout = (data, index) => {

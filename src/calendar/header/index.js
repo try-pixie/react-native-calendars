@@ -116,8 +116,9 @@ const CalendarHeader = forwardRef((props, ref) => {
   }, [firstDay, current, numberOfDaysCondition, numberOfDays, disabledDaysIndexes]);
   const _renderHeader = () => {
     const webProps = Platform.OS === 'web' ? {'aria-level': webAriaLevel} : {};
+    const monthLabel = formatNumbers(month?.toString(monthFormat));
     if (renderHeader) {
-      return renderHeader(month);
+      return renderHeader(monthLabel);
     }
     if (customHeaderTitle) {
       return customHeaderTitle;
@@ -125,7 +126,7 @@ const CalendarHeader = forwardRef((props, ref) => {
     return (
       <Fragment>
         <Text allowFontScaling={false} style={style.current.monthText} testID={`${testID}.title`} {...webProps}>
-          {formatNumbers(month?.toString(monthFormat))}
+          {monthLabel}
         </Text>
       </Fragment>
     );
