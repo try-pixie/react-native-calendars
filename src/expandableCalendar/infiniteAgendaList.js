@@ -38,7 +38,8 @@ const InfiniteAgendaList = props => {
     renderItem,
     onEndReached,
     onEndReachedThreshold,
-    refreshControl
+    refreshControl,
+    setRef
   } = props;
   const {date, updateSource, setDate} = useContext(Context);
   const style = useRef(styleConstructor(theme));
@@ -48,6 +49,9 @@ const InfiniteAgendaList = props => {
   const sectionScroll = useRef(false);
   const [data, setData] = useState([]);
   const dataRef = useRef(data);
+  useEffect(() => {
+    if (list?.current) setRef(list);
+  }, [list]);
   useEffect(() => {
     const items = sections.reduce((acc, cur) => {
       return [...acc, {title: cur.title, isTitle: true}, ...cur.data];
@@ -89,6 +93,7 @@ const InfiniteAgendaList = props => {
   const getSectionTitle = useCallback(title => {
     if (!title) return;
     let sectionTitle = title;
+    let day;
     if (dayFormatter) {
       sectionTitle = dayFormatter(title);
     } else if (dayFormat) {
@@ -96,15 +101,17 @@ const InfiniteAgendaList = props => {
         const moment = getMoment();
         sectionTitle = moment(title).format(dayFormat);
       } else {
-        sectionTitle = new XDate(title).toString(dayFormat);
+        day = new XDate(title).toString('dddd');
+        sectionTitle = new XDate(title).toString('MMM d');
       }
     }
     if (markToday) {
       const string = getDefaultLocale().today || todayString;
       const today = isToday(title);
-      sectionTitle = today ? `${string}, ${sectionTitle}` : sectionTitle;
+      // sectionTitle = today ? `${string}, ${sectionTitle}` : sectionTitle;
+      day = today ? `${string}` : day;
     }
-    return sectionTitle;
+    return {day, date: sectionTitle, title};
   }, []);
   const scrollToSection = useCallback(
     debounce(
@@ -133,9 +140,29 @@ const InfiniteAgendaList = props => {
     () =>
       new LayoutProvider(
         index => (dataRef.current[index]?.isTitle ? 'title' : 'page'),
-        (type, dim) => {
+        (type, dim, index) => {
           dim.width = constants.screenWidth;
-          dim.height = type === 'title' ? infiniteListProps?.titleHeight ?? 60 : infiniteListProps?.itemHeight ?? 80;
+          if (type === 'title') {
+            if (infiniteListProps?.calculateHeaderHeight) {
+              const headerHeight = infiniteListProps?.calculateHeaderHeight(dataRef.current[index]?.title);
+              // console.log(`Calculated Header Height for ${dataRef?.current[index]?.title}:`, headerHeight);
+              dim.height = headerHeight || 60;
+            } else if (infiniteListProps?.titleHeight) {
+              dim.height = infiniteListProps?.titleHeight;
+            } else {
+              dim.height = 60;
+            }
+          } else {
+            // Normal Item
+            if (infiniteListProps?.calculateItemHeight) {
+              const itemHeight = infiniteListProps?.calculateItemHeight(dataRef.current[index]);
+              dim.height = itemHeight || 80;
+            } else if (infiniteListProps?.itemHeight) {
+              dim.height = infiniteListProps?.itemHeight;
+            } else {
+              dim.height = 80;
+            }
+          }
         }
       ),
     []
@@ -195,10 +222,10 @@ const InfiniteAgendaList = props => {
   const _renderSectionHeader = useCallback(
     info => {
       const title = info?.section?.title;
-      if (renderSectionHeader) {
-        return renderSectionHeader(title);
-      }
       const headerTitle = getSectionTitle(title);
+      if (renderSectionHeader) {
+        return renderSectionHeader(headerTitle);
+      }
       return <AgendaSectionHeader title={headerTitle} style={headerTextStyle} />;
     },
     [headerTextStyle]
