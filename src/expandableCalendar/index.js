@@ -58,6 +58,7 @@ const ExpandableCalendar = props => {
     initialPosition = Positions.CLOSED,
     onCalendarToggled,
     disablePan,
+    yPanThreshold,
     hideKnob = numberOfDays && numberOfDays > 1,
     leftArrowImageSource = LEFT_ARROW,
     rightArrowImageSource = RIGHT_ARROW,
@@ -261,8 +262,12 @@ const ExpandableCalendar = props => {
       // disable pan detection to limit to closed height
       return false;
     }
-    return gestureState.dy > 5 || gestureState.dy < -5;
+
+    const yThreshold = yPanThreshold || 5;
+
+    return gestureState.dy > yThreshold || gestureState.dy < -yThreshold;
   };
+
   const handlePanResponderMove = (_, gestureState) => {
     // limit min height to closed height and max to open height
     _wrapperStyles.current.style.height = Math.min(
@@ -282,6 +287,7 @@ const ExpandableCalendar = props => {
     }
     updateNativeStyles();
   };
+
   const handlePanResponderEnd = () => {
     _height.current = Number(_wrapperStyles.current.style.height);
     bounceToPosition();
