@@ -13,7 +13,8 @@ export var Markings;
   Markings['CUSTOM'] = 'custom';
 })(Markings || (Markings = {}));
 const Marking = props => {
-  const {theme, type, dots, periods, selected, dotColor} = props;
+  const {theme, type, dots, periods, selected, dotColor, today} = props;
+  console.log('today:', today);
   const style = useRef(styleConstructor(theme));
   const getItems = items => {
     if (items && Array.isArray(items) && items.length > 0) {
@@ -65,7 +66,7 @@ const Marking = props => {
       }
       color = selected && item.selectedDotColor ? item.selectedDotColor : item.color;
     }
-    return <Dot {...dotProps} key={key} color={color} />;
+    return <Dot {...dotProps} key={key} borderWidth={selected || today ? 0 : 1} color={color} />;
   };
   return renderMarkingByType();
 };

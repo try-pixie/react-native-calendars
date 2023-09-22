@@ -23,7 +23,7 @@ const BasicDay = props => {
   const isSelected = _marking.selected || state === 'selected';
   const isDisabled = typeof _marking.disabled !== 'undefined' ? _marking.disabled : state === 'disabled';
   const isInactive = _marking?.inactive;
-  const isToday = state === 'today';
+  const isToday = xdateToData(new Date())?.dateString === date; //state === 'today';
   const isMultiDot = markingType === Marking.markings.MULTI_DOT;
   const isMultiPeriod = markingType === Marking.markings.MULTI_PERIOD;
   const isCustom = markingType === Marking.markings.CUSTOM;
@@ -43,14 +43,18 @@ const BasicDay = props => {
   const getContainerStyle = () => {
     const {customStyles, selectedColor} = _marking;
     const styles = [style.current.base];
+
     if (isSelected) {
-      styles.push(style.current.selected);
       if (selectedColor) {
         styles.push({backgroundColor: selectedColor});
       }
-    } else if (isToday) {
+      if (!isToday) styles.push(style.current.selected);
+      else styles.push(style.current.today);
+    } else if (isToday && !isSelected) {
       styles.push(style.current.today);
+      styles.push({opacity: 0.7});
     }
+
     //Custom marking type
     if (isCustom && customStyles && customStyles.container) {
       if (customStyles.container.borderRadius === undefined) {
@@ -58,6 +62,7 @@ const BasicDay = props => {
       }
       styles.push(customStyles.container);
     }
+
     return styles;
   };
   const getTextStyle = () => {
