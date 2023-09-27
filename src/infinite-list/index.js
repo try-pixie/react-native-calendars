@@ -5,7 +5,11 @@ import React, {forwardRef, useCallback, useEffect, useMemo, useRef} from 'react'
 import {DataProvider, LayoutProvider, RecyclerListView} from 'recyclerlistview';
 import constants from '../commons/constants';
 import {useCombinedRefs} from '../hooks';
-const dataProviderMaker = items => new DataProvider((item1, item2) => item1 !== item2).cloneWithRows(items);
+const dataProviderMaker = items =>
+  new DataProvider(
+    (item1, item2) => item1 !== item2,
+    index => index
+  ).cloneWithRows(items);
 const InfiniteList = (props, ref) => {
   const {
     isHorizontal,
@@ -30,9 +34,11 @@ const InfiniteList = (props, ref) => {
     onEndReached,
     renderFooter
   } = props;
+
   const dataProvider = useMemo(() => {
     return dataProviderMaker(data);
   }, [data]);
+
   const _layoutProvider = useRef(
     new LayoutProvider(
       () => 'page',
@@ -121,6 +127,7 @@ const InfiniteList = (props, ref) => {
   const style = useMemo(() => {
     return {height: pageHeight};
   }, [pageHeight]);
+
   return (
     <RecyclerListView
       // @ts-expect-error

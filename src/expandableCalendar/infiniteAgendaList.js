@@ -39,7 +39,8 @@ const InfiniteAgendaList = props => {
     onEndReached,
     onEndReachedThreshold,
     refreshControl,
-    setRef
+    setRef,
+    recyclerListProps
   } = props;
   const {date, updateSource, setDate} = useContext(Context);
   const style = useRef(styleConstructor(theme));
@@ -247,6 +248,7 @@ const InfiniteAgendaList = props => {
       onEndReached({distanceFromEnd: 0}); // The RecyclerListView doesn't provide the distanceFromEnd, so we just pass 0
     }
   }, [onEndReached]);
+
   return (
     <InfiniteList
       ref={list}
@@ -256,11 +258,17 @@ const InfiniteAgendaList = props => {
       layoutProvider={layoutProvider}
       onScroll={_onScroll}
       onVisibleIndicesChanged={_onVisibleIndicesChanged}
-      scrollViewProps={{onMomentumScrollEnd: _onMomentumScrollEnd, nestedScrollEnabled: true, refreshControl}}
+      scrollViewProps={{
+        onMomentumScrollEnd: _onMomentumScrollEnd,
+        nestedScrollEnabled: true,
+        refreshControl,
+        maintainVisibleContentPosition: {minIndexForVisible: 0}
+      }}
       onEndReached={_onEndReached}
       onEndReachedThreshold={onEndReachedThreshold}
       disableScrollOnDataChange
       renderFooter={infiniteListProps?.renderFooter}
+      initialPageIndex={infiniteListProps?.recyclerListProps?.initialRenderIndex}
     />
   );
 };
