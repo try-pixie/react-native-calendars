@@ -14,7 +14,6 @@ export var Markings;
 })(Markings || (Markings = {}));
 const Marking = props => {
   const {theme, type, dots, periods, selected, dotColor, today} = props;
-  console.log('today:', today);
   const style = useRef(styleConstructor(theme));
   const getItems = items => {
     if (items && Array.isArray(items) && items.length > 0) {
