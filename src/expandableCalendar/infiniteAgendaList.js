@@ -40,7 +40,8 @@ const InfiniteAgendaList = props => {
     onEndReachedThreshold,
     refreshControl,
     setRef,
-    recyclerListProps
+    recyclerListProps,
+    setCurrentVisibleDate
   } = props;
   const {date, updateSource, setDate} = useContext(Context);
   const style = useRef(styleConstructor(theme));
@@ -197,6 +198,7 @@ const InfiniteAgendaList = props => {
             if (didScroll.current && !avoidDateUpdates) {
               // to avoid setDate() on first load (while setting the initial context.date value)
               setDate?.(topSection.title, UpdateSources.LIST_DRAG);
+              setCurrentVisibleDate?.(topSection.title);
             }
           }
         }
