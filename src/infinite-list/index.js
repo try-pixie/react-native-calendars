@@ -32,7 +32,8 @@ const InfiniteList = (props, ref) => {
     layoutProvider,
     onScroll,
     onEndReached,
-    renderFooter
+    renderFooter,
+    forceNonDeterministicRendering
   } = props;
 
   const dataProvider = useMemo(() => {
@@ -146,6 +147,7 @@ const InfiniteList = (props, ref) => {
       onEndReachedThreshold={onEndReachedThreshold}
       onVisibleIndicesChanged={onVisibleIndicesChanged}
       renderFooter={renderFooter}
+      forceNonDeterministicRendering={forceNonDeterministicRendering}
     />
   );
 };

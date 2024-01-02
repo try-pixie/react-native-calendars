@@ -271,6 +271,8 @@ const InfiniteAgendaList = props => {
       disableScrollOnDataChange
       renderFooter={infiniteListProps?.renderFooter}
       initialPageIndex={infiniteListProps?.recyclerListProps?.initialRenderIndex}
+      forceNonDeterministicRendering={infiniteListProps?.recyclerListProps?.forceNonDeterministicRendering}
+      initialOffset={infiniteListProps?.recyclerListProps?.initialOffset}
     />
   );
 };
